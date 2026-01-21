@@ -42,7 +42,7 @@ module.exports.register = async (req, res) => {
 
     return res.status(200).json({
         success: true,
-        message: "user registered successfully"
+        message: "user registed successfully"
     });
 
 }
@@ -80,8 +80,7 @@ module.exports.login = async (req, res) => {
 
     const token = jwt.sign(
         {
-            name: user.name,
-            email: user.email,
+            id: user._id,
             role: user.role
         },
         process.env.JWT_KEY,
@@ -90,31 +89,17 @@ module.exports.login = async (req, res) => {
         }
     );
 
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 24 * 60 * 60 * 1000
-    });
+    // res.cookie("token", token, {
+    //     httpOnly: true,
+    //     secure: false,
+    //     sameSite: "strict",
+    //     maxAge: 24 * 60 * 60 * 1000
+    // });
 
     return res.status(200).json({
         success: true,
-        message: "login successfully done"
-    });
-
-}
-
-module.exports.logout = (req, res) => {
-
-    res.clearCookie("token", {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict"
-    });
-
-    return res.status(200).json({
-        success: true,
-        message: "Logout successfully"
+        message: "login successfully done",
+        token
     });
 
 }
