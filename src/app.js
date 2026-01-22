@@ -5,6 +5,7 @@ const app = express();
 // route file
 const authRoute = require("./routes/auth.route");
 const userRoute = require("./routes/user.route");
+const appointmentRoute = require("./routes/appointment.route");
 
 
 // globle middleware
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 // all api
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
+app.use("/api/appointments", appointmentRoute);
 
 
 

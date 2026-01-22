@@ -1,8 +1,8 @@
-const route = require("express").Router();
-const { getUser } = require("../controller/user.middleware");
+const router = require("express").Router();
+const { getUser } = require("../controller/user.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { allowedTo } = require("../middleware/role.middleware");
 
-route.get("/me", protect, allowedTo("doctor", "patient"), getUser);
+router.get("/me", protect, allowedTo("doctor", "patient"), getUser);
 
-module.exports = route;
+module.exports = router;
