@@ -1,6 +1,7 @@
 const app = require("../app");
 const Appointment = require("../models/Appointment.model");
 const User = require("../models/User.model");
+const asyncHandler = require("../utils/asyncHandler");
 
 module.exports.bookAppointment = asyncHandler(async (req, res) => {
 

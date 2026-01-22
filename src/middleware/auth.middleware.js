@@ -19,7 +19,7 @@ module.exports.protect = async (req, res, next) => {
             });
         }
         
-        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         // return res.send(token);
 
         const user = await User.findById(decoded.id).select("-password");

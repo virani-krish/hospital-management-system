@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+const asyncHandler = require("../utils/asyncHandler");
 
 module.exports.register = asyncHandler(async (req, res) => {
 
@@ -70,7 +71,6 @@ module.exports.login = asyncHandler(async (req, res) => {
 
     // check password is match or not
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
         return res.status(401).json({
             success: false,
@@ -78,28 +78,66 @@ module.exports.login = asyncHandler(async (req, res) => {
         });
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_ACCESS_SECRET,
         {
-            id: user._id,
-            role: user.role
-        },
-        process.env.JWT_KEY,
-        {
-            expiresIn: "1d"
+            expiresIn: "15m"
         }
     );
 
-    // res.cookie("token", token, {
-    //     httpOnly: true,
-    //     secure: false,
-    //     sameSite: "strict",
-    //     maxAge: 24 * 60 * 60 * 1000
-    // });
+    const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+    )
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
     return res.status(200).json({
         success: true,
         message: "login successfully done",
-        token
+        accessToken
     });
 
 });
+
+
+module.exports.refreshToken = (req, res) => {
+    const token = req.cookies.refreshToken;
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: "refresh token missing"
+        })
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+        { id: decoded.id },
+        process.env.JWT_ACCESS_SECRET,
+        { expiresIn: "15m" }
+    );
+
+    return res.status(200).json({
+        success: true,
+        message: "new Token generated",
+        accessToken: newAccessToken
+    });
+
+}
+
+module.exports.logout = (req, res) => {
+    res.clearCookie("refreshToken");
+    res.status(200).json({
+        success: true,
+        message: "Logged out successfully"
+    });
+};
