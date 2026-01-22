@@ -2,7 +2,7 @@ const app = require("../app");
 const Appointment = require("../models/Appointment.model");
 const User = require("../models/User.model");
 
-module.exports.bookAppointment = async (req, res) => {
+module.exports.bookAppointment = asyncHandler(async (req, res) => {
 
     const { doctorId, date, reasone } = req.body;
 
@@ -35,9 +35,9 @@ module.exports.bookAppointment = async (req, res) => {
         data: appointment
     });
 
-}
+});
 
-module.exports.getMyAppointment = async (req, res) => {
+module.exports.getMyAppointment = asyncHandler(async (req, res) => {
 
     const filter = req.user.role === "doctor"
         ? { doctor: req.user._id }
@@ -53,9 +53,9 @@ module.exports.getMyAppointment = async (req, res) => {
         data: appointment
     });
 
-}
+});
 
-module.exports.updateAppointmentStatus = async (req, res) => {
+module.exports.updateAppointmentStatus = asyncHandler(async (req, res) => {
 
     const doctorId = req.user._id;
     const appointmentId = req.params.id;
@@ -78,4 +78,4 @@ module.exports.updateAppointmentStatus = async (req, res) => {
         message: "appointment status updated successfully"
     });
 
-}
+});
