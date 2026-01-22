@@ -24,7 +24,7 @@ module.exports.register = async (req, res) => {
     // check email already registed or not
     const user = await User.findOne({ email });
     if (user) {
-        return res.status(400).json({
+        return res.status(409).json({
             success: false,
             message: "email already registed"
         });
@@ -40,7 +40,7 @@ module.exports.register = async (req, res) => {
         role
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
         success: true,
         message: "user registed successfully"
     });
@@ -64,7 +64,7 @@ module.exports.login = async (req, res) => {
     if (!user) {
         return res.status(404).json({
             success: false,
-            message: "Email is not registed"
+            message: "Invalid email or password"
         });
     }
 
@@ -74,7 +74,7 @@ module.exports.login = async (req, res) => {
     if (!isMatch) {
         return res.status(401).json({
             success: false,
-            message: "Invalid password"
+            message: "Invalid email or password"
         });
     }
 
